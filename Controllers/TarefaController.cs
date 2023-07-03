@@ -48,9 +48,16 @@ namespace TrilhaApiDesafio.Controllers
         }
 
         [HttpGet("ObterPorStatus")]
-        public IActionResult ObterPorStatus(EnumStatusTarefa status)
+        public IActionResult ObterPorStatus(EnumStatusTarefa? status)
         {
-            var tarefa = _context.Tarefas.Where(x => x.Status == status); // Busca as tarefas no banco, que contenha o status recebido por parâmetro
+            // Verifica se a opção fornecida pelo usuário será "Pendente" ou "Finalizado"
+            if (status != EnumStatusTarefa.Pendente && status != EnumStatusTarefa.Finalizado)
+            {
+                return BadRequest(new { Erro = "Escolha uma das duas opções: Pendente ou Finalizado" }); // Se não for, retornará uma mensagem de erro
+            }
+
+            var tarefa = _context.Tarefas.Where(x => status == null || x.Status == status); // Busca as tarefas no banco, que contenha o status recebido por parâmetro
+
             return Ok(tarefa);
         }
 
